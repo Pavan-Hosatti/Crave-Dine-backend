@@ -1,13 +1,15 @@
 const express = require('express');
-const { placeOrder, getMyOrders, clearMyOrders } = require('../controllers/orderController'); // Import clearMyOrders
-// FIX: Corrected import path and name for isAuthenticated middleware
-const { isAuthenticated } = require('../middleware/authMiddleware'); // Assuming auth.js is in backend/middlewares/
+const { placeOrder, getMyOrders, clearMyOrders } = require('../controllers/orderController');
+const { isAuthenticated } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// FIX: Updated route to include '/path' as specified by the user
-router.post('/path', isAuthenticated, placeOrder);
-router.get('/my', isAuthenticated, getMyOrders);
+// The 'placeOrder' function is typically called internally by the payment verification route
+
+// not usually exposed as a direct frontend route like '/path'.
+// So, removing the '/path' route here.
+
+router.get('/my', isAuthenticated, getMyOrders); // Route to get authenticated user's orders
 router.delete('/my', isAuthenticated, clearMyOrders); // Route to clear user's orders
 
 module.exports = router;
