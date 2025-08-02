@@ -1,9 +1,8 @@
 
 
 
-// This file (e.g., controllers/authController.js)
-// relies on environment variables being loaded by your main server file (e.g., server.js or app.js).
-// Therefore, 'require('dotenv').config();' should NOT be present here.
+
+
 
 const User = require('../models/userSchema');
 
@@ -87,7 +86,7 @@ exports.signup = async (req, res, next) => {
             token,
         });
     } catch (error) {
-        console.error("Error in signup:", error);
+      
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -172,7 +171,7 @@ exports.googleSignIn = async (req, res, next) => {
             token,
         });
     } catch (error) {
-        console.error("Error in Google sign-in:", error);
+        
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -208,7 +207,7 @@ exports.updateAddress = async (req, res, next) => {
             },
         });
     } catch (error) {
-        console.error("Error updating address:", error);
+        
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -241,7 +240,7 @@ exports.changePassword = async (req, res, next) => {
             message: "Password changed successfully",
         });
     } catch (error) {
-        console.error("Error changing password:", error);
+       
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -283,7 +282,7 @@ exports.updateEmail = async (req, res, next) => {
             },
         });
     } catch (error) {
-        console.error("Error updating email:", error);
+        
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -326,7 +325,7 @@ exports.updateUsername = async (req, res, next) => {
             },
         });
     } catch (error) {
-        console.error("Error updating username:", error);
+        
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -343,7 +342,7 @@ exports.getUserProfile = async (req, res, next) => {
             user,
         });
     } catch (error) {
-        console.error("Error getting user profile:", error);
+        
         return next(new ErrorHandler(error.message, 500));
     }
 };
