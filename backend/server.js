@@ -6,22 +6,22 @@ dbConnection();
 const PORT = process.env.PORT || 9000;
 
 const server = app.listen(PORT, () => {
-  // Console log removed for clean production output
+  console.log(`Server running on port ${PORT}`);
 });
 
 server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
-    // Specific error message for port in use removed for clean production output
+    console.error(`Port ${PORT} is already in use.`);
   }
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  // Console error removed for clean production output
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   process.exit(1);
 });
 
 process.on('uncaughtException', (err, origin) => {
-  // Console error removed for clean production output
+  console.error('Uncaught Exception at:', origin, 'error:', err);
   process.exit(1);
 });
