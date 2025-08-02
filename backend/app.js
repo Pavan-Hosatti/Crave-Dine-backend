@@ -15,6 +15,7 @@ const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:5173',
     'http://127.0.0.1:5173',
+    'http://127.0.0.1:9000',
     process.env.FRONTEND_URL,
 ];
 
@@ -38,9 +39,10 @@ app.get('/api/v1', (req, res) => {
 });
 
 app.use('/api/v1/payment', paymentRoutes);
-app.use('/api/auth', authRoute);
+// FIX: Changed '/api/auth' to '/api/v1/auth' to match frontend's API URL structure
+app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/reservation', reservationRoute);
-app.use('/api/orders', orderRoutes);
+app.use('/api/v1/orders', orderRoutes); // Also changed this for consistency, assuming frontend uses /api/v1/orders
 
 
 app.get('/api/test', (req, res) => {
