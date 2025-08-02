@@ -1,36 +1,30 @@
-
-
-
-
-
+// This file (e.g., controllers/authController.js)
+// relies on environment variables being loaded by your main server file (e.g., server.js or app.js).
+// Therefore, 'require('dotenv').config();' should NOT be present here.
 
 const User = require('../models/userSchema');
 
-const { ErrorHandler } = require('../error/error');
+// FIX: Changed import back to destructuring for ErrorHandler, assuming it's a named export from ../error/error.js
+const { ErrorHandler } = require('../error/error'); 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const firebaseAdmin = require('firebase-admin'); // Ensure firebase-admin is installed: npm install firebase-admin
 const crypto = require('crypto'); // For generating random password for Google Sign-In
 
 
-
-
-
 // Directly use the provided Firebase service account JSON object
 const serviceAccount = {
-  type: process.env.FIREBASE_TYPE,
-  project_id: process.env.FIREBASE_PROJECT_ID,
-  private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
-  private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-  client_email: process.env.FIREBASE_CLIENT_EMAIL,
-  client_id: process.env.FIREBASE_CLIENT_ID,
-  auth_uri: process.env.FIREBASE_AUTH_URI,
-  token_uri: process.env.FIREBASE_TOKEN_URI,
-  auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
-  client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
+    type: process.env.FIREBASE_TYPE,
+    project_id: process.env.FIREBASE_PROJECT_ID,
+    private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+    private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    client_email: process.env.FIREBASE_CLIENT_EMAIL,
+    client_id: process.env.FIREBASE_CLIENT_ID,
+    auth_uri: process.env.FIREBASE_AUTH_URI,
+    token_uri: process.env.FIREBASE_TOKEN_URI,
+    auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+    client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
 };
-
-
 
 
 // Initialize Firebase Admin SDK if not already done
@@ -38,7 +32,6 @@ if (!firebaseAdmin.apps.length) {
     firebaseAdmin.initializeApp({
         credential: firebaseAdmin.credential.cert(serviceAccount)
     });
-   
 }
 
 
@@ -86,7 +79,12 @@ exports.signup = async (req, res, next) => {
             token,
         });
     } catch (error) {
-      
+        console.error("Error in signup:", error);
+        // Handle Mongoose validation errors specifically
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return next(new ErrorHandler(`Validation Error: ${messages.join(', ')}`, 400));
+        }
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -125,7 +123,12 @@ exports.login = async (req, res, next) => {
             token,
         });
     } catch (error) {
-       
+        console.error("Error in login:", error);
+        // Handle Mongoose validation errors specifically
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return next(new ErrorHandler(`Validation Error: ${messages.join(', ')}`, 400));
+        }
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -171,7 +174,12 @@ exports.googleSignIn = async (req, res, next) => {
             token,
         });
     } catch (error) {
-        
+        console.error("Error in Google sign-in:", error);
+        // Handle Mongoose validation errors specifically
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return next(new ErrorHandler(`Validation Error: ${messages.join(', ')}`, 400));
+        }
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -207,7 +215,12 @@ exports.updateAddress = async (req, res, next) => {
             },
         });
     } catch (error) {
-        
+        console.error("Error updating address:", error); // Log the full error object
+        // Handle Mongoose validation errors specifically
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return next(new ErrorHandler(`Validation Error: ${messages.join(', ')}`, 400));
+        }
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -240,7 +253,12 @@ exports.changePassword = async (req, res, next) => {
             message: "Password changed successfully",
         });
     } catch (error) {
-       
+        console.error("Error changing password:", error); // Log the full error object
+        // Handle Mongoose validation errors specifically
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return next(new ErrorHandler(`Validation Error: ${messages.join(', ')}`, 400));
+        }
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -282,7 +300,12 @@ exports.updateEmail = async (req, res, next) => {
             },
         });
     } catch (error) {
-        
+        console.error("Error updating email:", error); // Log the full error object
+        // Handle Mongoose validation errors specifically
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return next(new ErrorHandler(`Validation Error: ${messages.join(', ')}`, 400));
+        }
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -301,7 +324,7 @@ exports.updateUsername = async (req, res, next) => {
         // Optional: Add validation for username uniqueness if desired
         // const existingUser = await User.findOne({ username });
         // if (existingUser && existingUser._id.toString() !== userId) {
-        //     return next(new ErrorHandler("Username already taken", 400));
+        //    return next(new ErrorHandler("Username already taken", 400));
         // }
 
         const user = await User.findByIdAndUpdate(
@@ -325,7 +348,12 @@ exports.updateUsername = async (req, res, next) => {
             },
         });
     } catch (error) {
-        
+        console.error("Error updating username:", error); // Log the full error object
+        // Handle Mongoose validation errors specifically
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(val => val.message);
+            return next(new ErrorHandler(`Validation Error: ${messages.join(', ')}`, 400));
+        }
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -342,7 +370,7 @@ exports.getUserProfile = async (req, res, next) => {
             user,
         });
     } catch (error) {
-        
+        console.error("Error getting user profile:", error);
         return next(new ErrorHandler(error.message, 500));
     }
 };
