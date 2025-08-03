@@ -5,7 +5,7 @@
 const User = require('../models/userSchema');
 
 // FIX: Changed import back to destructuring for ErrorHandler, assuming it's a named export from ../error/error.js
-const { ErrorHandler } = require('../error/error'); 
+const { ErrorHandler } = require('../error/error');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const firebaseAdmin = require('firebase-admin'); // Ensure firebase-admin is installed: npm install firebase-admin
@@ -84,6 +84,10 @@ exports.signup = async (req, res, next) => {
         if (error.name === 'ValidationError') {
             const messages = Object.values(error.errors).map(val => val.message);
             return next(new ErrorHandler(`Validation Error: ${messages.join(', ')}`, 400));
+        }
+        // Handle duplicate key errors (e.g., unique email constraint)
+        if (error.code === 11000) {
+            return next(new ErrorHandler("Duplicate field value entered", 400));
         }
         return next(new ErrorHandler(error.message, 500));
     }
@@ -221,6 +225,10 @@ exports.updateAddress = async (req, res, next) => {
             const messages = Object.values(error.errors).map(val => val.message);
             return next(new ErrorHandler(`Validation Error: ${messages.join(', ')}`, 400));
         }
+        // Handle duplicate key errors (e.g., if address sub-document has unique fields)
+        if (error.code === 11000) {
+            return next(new ErrorHandler("Duplicate field value entered for address", 400));
+        }
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -245,8 +253,9 @@ exports.changePassword = async (req, res, next) => {
             return next(new ErrorHandler("Current password is incorrect", 401));
         }
 
+        // Hash the new password and save
         user.password = await bcrypt.hash(newPassword, 10);
-        await user.save();
+        await user.save(); // This will trigger any pre-save hooks on your User schema
 
         res.status(200).json({
             success: true,
@@ -306,6 +315,10 @@ exports.updateEmail = async (req, res, next) => {
             const messages = Object.values(error.errors).map(val => val.message);
             return next(new ErrorHandler(`Validation Error: ${messages.join(', ')}`, 400));
         }
+        // Handle duplicate key errors (e.g., unique email constraint)
+        if (error.code === 11000) {
+            return next(new ErrorHandler("Email already in use", 400));
+        }
         return next(new ErrorHandler(error.message, 500));
     }
 };
@@ -322,10 +335,10 @@ exports.updateUsername = async (req, res, next) => {
         }
 
         // Optional: Add validation for username uniqueness if desired
-        // const existingUser = await User.findOne({ username });
-        // if (existingUser && existingUser._id.toString() !== userId) {
-        //    return next(new ErrorHandler("Username already taken", 400));
-        // }
+        const existingUser = await User.findOne({ username });
+        if (existingUser && existingUser._id.toString() !== userId) {
+            return next(new ErrorHandler("Username already taken", 400));
+        }
 
         const user = await User.findByIdAndUpdate(
             userId,
@@ -353,6 +366,10 @@ exports.updateUsername = async (req, res, next) => {
         if (error.name === 'ValidationError') {
             const messages = Object.values(error.errors).map(val => val.message);
             return next(new ErrorHandler(`Validation Error: ${messages.join(', ')}`, 400));
+        }
+        // Handle duplicate key errors (e.g., unique username constraint)
+        if (error.code === 11000) {
+            return next(new ErrorHandler("Username already taken", 400));
         }
         return next(new ErrorHandler(error.message, 500));
     }
