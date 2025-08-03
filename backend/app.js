@@ -20,6 +20,11 @@ const allowedOrigins = [
 ];
 
 
+// Debugging: Log the value of FRONTEND_URL and the full allowedOrigins array
+console.log('DEBUG: Value of process.env.FRONTEND_URL on Render:', process.env.FRONTEND_URL);
+console.log('DEBUG: Full allowedOrigins array on Render:', allowedOrigins);
+
+
 app.use(cors({
     origin: allowedOrigins,
     credentials: true,
