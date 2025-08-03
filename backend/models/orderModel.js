@@ -81,7 +81,8 @@ const orderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Placed', 'Confirmed', 'Preparing', 'Out for Delivery', 'Delivered', 'Cancelled'],
+        // ✅ FIX: Added 'Paid' to the enum array
+        enum: ['Placed', 'Confirmed', 'Preparing', 'Out for Delivery', 'Delivered', 'Cancelled', 'Paid'],
         default: 'Placed'
     },
 }, {
