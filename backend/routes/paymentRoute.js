@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { createOrder, verifyPayment } = require("../controllers/paymentController");
+const paymentController = require("../controllers/paymentController"); // Import the entire controller object
 
-router.post("/order", createOrder);
-router.post("/verify", verifyPayment);
+// You can add a console.log here to debug what 'paymentController' contains
+// console.log('DEBUG: paymentController object:', paymentController);
+
+router.post("/order", paymentController.createOrder); // Access createOrder as a property
+router.post("/verify", paymentController.verifyPayment); // Access verifyPayment as a property
 
 module.exports = router;
