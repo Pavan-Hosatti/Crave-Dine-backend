@@ -1,6 +1,5 @@
 const express = require('express');
-const router = express = require('express');
-const router = express.Router();
+const router = express.Router(); // Corrected: router is declared only once here
 const reservationController = require('../controllers/reservationController'); // Import the entire controller object
 
 // Debugging: Log the imported reservationController object
