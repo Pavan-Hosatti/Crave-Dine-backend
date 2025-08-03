@@ -3,16 +3,11 @@ const router = express.Router();
 const reservationController = require('../controllers/reservationController');
 
 
-const { isAuthenticated } = require('../middleware/authMiddleware');
+// Assuming you're now using the 'protect' middleware consistently
+const { protect } = require('../middleware/protect');
 
 
-router.post('/send', isAuthenticated, reservationController.sendReservation);
-router.get('/my', isAuthenticated, reservationController.getMyReservations);
-
-
-
-
-// ✅ Public Test Route
+// Public Test Route
 router.get('/test', (req, res) => {
   res.status(200).json({
     success: true,
@@ -20,12 +15,15 @@ router.get('/test', (req, res) => {
   });
 });
 
-// 🔐 Protected Route to Create a Reservation
+// Protected Route to Create a Reservation
+router.post('/send', protect, reservationController.sendReservation);
 
+// Protected Route to Get My Reservations
+router.get('/my', protect, reservationController.getMyReservations);
 
-router.post('/send', isAuthenticated, reservationController.sendReservation);
-router.get('/my', isAuthenticated, reservationController.getMyReservations);
-
+// ✅ NEW: Protected Route to Update a Specific Reservation by ID
+// This assumes your frontend will send the reservation ID in the URL parameter
+router.put('/:id', protect, reservationController.updateReservation);
 
 
 module.exports = router;
