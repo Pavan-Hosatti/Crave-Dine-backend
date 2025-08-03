@@ -11,12 +11,13 @@ const reservationRoute = require('./routes/reservationRoute');
 const orderRoutes = require('./routes/orderRoutes');
 
 
+// Define all allowed origins, including your Vercel frontend URL
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'http://127.0.0.1:9000',
-    process.env.FRONTEND_URL,
+    process.env.FRONTEND_URL, // This should be your deployed Vercel frontend URL
 ];
 
 
@@ -26,7 +27,15 @@ console.log('DEBUG: Full allowedOrigins array on Render:', allowedOrigins);
 
 
 app.use(cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        // or if the origin is in our allowed list
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'), false);
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -44,10 +53,9 @@ app.get('/api/v1', (req, res) => {
 });
 
 app.use('/api/v1/payment', paymentRoutes);
-// FIX: Changed '/api/auth' to '/api/v1/auth' to match frontend's API URL structure
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/reservation', reservationRoute);
-app.use('/api/v1/orders', orderRoutes); // Also changed this for consistency, assuming frontend uses /api/v1/orders
+app.use('/api/v1/orders', orderRoutes);
 
 
 app.get('/api/test', (req, res) => {
