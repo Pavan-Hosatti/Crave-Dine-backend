@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const paymentController = require("../controllers/paymentController"); // Import the entire controller object
+const paymentController = require("../controllers/paymentController");
 
-// You can add a console.log here to debug what 'paymentController' contains
-// console.log('DEBUG: paymentController object:', paymentController);
+router.post("/order", paymentController.createOrder);
+router.post("/verify", paymentController.verifyPayment);
 
-router.post("/order", paymentController.createOrder); // Access createOrder as a property
-router.post("/verify", paymentController.verifyPayment); // Access verifyPayment as a property
+// ✅ NEW: Route to handle Razorpay Webhooks
+// Razorpay will send POST requests to this endpoint
+router.post("/webhook", paymentController.handleWebhook);
 
 module.exports = router;
