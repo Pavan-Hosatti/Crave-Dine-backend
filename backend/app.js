@@ -56,6 +56,7 @@ app.use('/api/v1/payment', paymentRoutes);
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/reservation', reservationRoute);
 app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/dish', dishRoute);
 
 
 app.get('/api/test', (req, res) => {
