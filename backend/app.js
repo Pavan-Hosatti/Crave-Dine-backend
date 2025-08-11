@@ -9,7 +9,7 @@ const app = express();
 const authRoute = require('./routes/authRoute');
 const reservationRoute = require('./routes/reservationRoute');
 const orderRoutes = require('./routes/orderRoutes');
-const dishRoute = require("/routes/dishRoute");
+const dishRoute = require("./routes/dishRoute");
 
 
 // Define all allowed origins, including your Vercel frontend URL
@@ -87,4 +87,5 @@ app.use('*', (req, res) => {
 app.use(errorMiddleware);
 
 module.exports = app;
+
 
